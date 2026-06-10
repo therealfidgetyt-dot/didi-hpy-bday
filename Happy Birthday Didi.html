@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday Sis!</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#ff9ad5,#ffd6ec);
+    text-align:center;
+    color:#333;
+}
+
+.container{
+    margin-top:60px;
+}
+
+h1{
+    color:#d63384;
+}
+
+#game{
+    width:320px;
+    height:320px;
+    background:white;
+    border:4px solid #d63384;
+    margin:20px auto;
+    position:relative;
+    border-radius:15px;
+    overflow:hidden;
+}
+
+#gift{
+    width:50px;
+    height:50px;
+    background:gold;
+    position:absolute;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+button{
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    background:#d63384;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🎉 Happy Birthday Didi! :D 🎉</h1>
+
+    <p>
+        Find the gift box 10 times to unlock your birthday surprise!
+    </p>
+
+    <h2>Score: <span id="score">0</span>/10</h2>
+
+    <div id="game">
+        <div id="gift"></div>
+    </div>
+
+    <p id="message"></p>
+
+    <button onclick="restartGame()">Restart</button>
+</div>
+
+<script>
+let score = 0;
+
+const gift = document.getElementById("gift");
+const scoreText = document.getElementById("score");
+const message = document.getElementById("message");
+
+function moveGift(){
+    let x = Math.random() * 270;
+    let y = Math.random() * 270;
+
+    gift.style.left = x + "px";
+    gift.style.top = y + "px";
+}
+
+gift.addEventListener("click", function(){
+
+    score++;
+    scoreText.textContent = score;
+
+    if(score >= 10){
+        message.innerHTML =
+        "🎂 Congratulations! 🎂<br><br>" +
+        "Happy Birthday!<br>" +
+        "You are an amazing didi and I hope you have the best day ever! :D ❤️";
+        gift.style.display = "none";
+    }else{
+        moveGift();
+    }
+});
+
+function restartGame(){
+    score = 0;
+    scoreText.textContent = score;
+    message.textContent = "";
+    gift.style.display = "block";
+    moveGift();
+}
+
+moveGift();
+</script>
+
+</body>
+</html>
