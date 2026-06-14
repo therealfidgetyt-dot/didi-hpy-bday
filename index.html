@@ -127,19 +127,19 @@ input{
 
 <div id="colorGame">
 
-    <h1>🌈 Catch The Yellow Blocks!</h1>
+    <h1>🌈 Catch The Blocks!</h1>
 
     <p>
-        Catch 3 Yellow Blocks to continue.
+        Catch 3 ____ Blocks to continue.
     </p>
 
     <h2>
-        Yellow Score:
+        Score:
         <span id="yellowScore">0</span>/3
     </h2>
 
     <h3>
-        Mystery Points:
+        Mystery Score:
         <span id="mysteryPoints">0</span>
     </h3>
 
@@ -298,58 +298,105 @@ function createBlock(){
 
     },20);
 
-    block.onclick = ()=>{
+block.onclick = ()=>{
 
-        clearInterval(fall);
+    clearInterval(fall);
+
+    if(block.parentNode){
         block.remove();
+    }
 
-        const msg =
-        document.getElementById("colorMessage");
+    const msg =
+    document.getElementById("colorMessage");
 
-        if(color === "yellow"){
+    if(color === "yellow"){
+
+        if(yellowCount < 3){
 
             yellowCount++;
 
             document.getElementById("yellowScore")
             .textContent = yellowCount;
-
-            msg.innerHTML =
-            "🟨 Nice! Yellow collected.";
-
-            if(yellowCount >= 3){
-
-                msg.innerHTML =
-                "🎉 You found enough Yellow Blocks!";
-
-                document.getElementById("riddleBtn")
-                .style.display = "inline-block";
-            }
-
         }
 
-        else if(color === "red"){
+        msg.innerHTML =
+        "Interesting...";
+
+        if(yellowCount >= 3){
+
+            yellowCount = 3;
+
+            document.getElementById("yellowScore")
+            .textContent = 3;
 
             msg.innerHTML =
-            "🎊 CONFETTI POPPER!! 🎊";
+            "🎉 You found the correct blocks!";
 
+            document.getElementById("riddleBtn")
+            .style.display = "inline-block";
         }
+    }
 
-        else if(color === "blue"){
+    else if(color === "red"){
 
-            msg.innerHTML =
-            "💎 You discovered a magical sapphire!";
+        msg.innerHTML =
+        "🎊 CONFETTI! 🎊";
 
+        for(let i=0;i<30;i++){
+
+            const piece =
+            document.createElement("div");
+
+            piece.innerHTML = "🎊";
+
+            piece.style.position = "fixed";
+            piece.style.left =
+            Math.random()*window.innerWidth + "px";
+
+            piece.style.top = "-50px";
+
+            piece.style.fontSize = "24px";
+            piece.style.pointerEvents = "none";
+            piece.style.zIndex = "9999";
+
+            document.body.appendChild(piece);
+
+            let y = -50;
+
+            const drop = setInterval(()=>{
+
+                y += 8;
+
+                piece.style.top =
+                y + "px";
+
+                if(y > window.innerHeight){
+
+                    clearInterval(drop);
+                    piece.remove();
+                }
+
+            },20);
         }
+    }
 
-        else if(color === "green"){
+    else if(color === "blue"){
 
-            mysteryPoints += 5;
+        msg.innerHTML =
+        "💎 You discovered a magical sapphire!";
+    }
 
-            document.getElementById("mysteryPoints")
-            .textContent = mysteryPoints;
+    else if(color === "green"){
 
-            msg.innerHTML =
-            "🍀 +5 Mystery Points!";
+        mysteryPoints += 7;
+
+        document.getElementById("mysteryPoints")
+        .textContent = mysteryPoints;
+
+        msg.innerHTML =
+        "🟩 Mysterious...";
+    }
+};
         }
 
     };
@@ -376,25 +423,30 @@ function checkRiddle(){
     .trim()
     .toLowerCase();
 
-    if(answer === "blue"){
+   if(answer === "blue"){
 
-        document.getElementById("hexColor")
-        .innerHTML =
-        "<span style='color:#1A1AFF;'>Blue</span>";
+    document.getElementById("hexColor")
+    .innerHTML =
+    "<span style='color:white;'>Blue</span>";
 
-        document.body.style.background =
-        "#1A1AFF";
+    document.body.style.background =
+    "#1A1AFF";
 
-        document.body.style.color =
-        "white";
+    document.body.style.color =
+    "white";
 
-        document.getElementById("riddleResult")
-        .innerHTML =
-        "💙 Correct!<br><br>" +
-        "Happy Birthday Didi! 🎂❤️";
+    document.getElementById("riddleAnswer")
+    .disabled = true;
 
-    }
+    document.querySelector("#riddlePage button")
+    .disabled = true;
 
+    document.getElementById("riddleResult")
+    .innerHTML =
+    "💙 Correct!<br><br>" +
+    "Happy Birthday Didi! 🎂❤️";
+
+}
     else{
 
         document.getElementById("riddleResult")
