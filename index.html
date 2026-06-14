@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Happy Birthday Sis!</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Didi! 🎂</title>
 
 <style>
 body{
@@ -11,6 +12,7 @@ body{
     background:linear-gradient(135deg,#ff9ad5,#ffd6ec);
     text-align:center;
     color:#333;
+    transition:background 1s ease;
 }
 
 .container{
@@ -49,13 +51,58 @@ button{
     color:white;
     font-size:16px;
     cursor:pointer;
+    margin:10px;
+}
+
+#nextBtn,
+#riddleBtn{
+    display:none;
+}
+
+#colorGame,
+#riddlePage{
+    display:none;
+    margin-top:40px;
+}
+
+#fallArea{
+    width:400px;
+    height:500px;
+    background:white;
+    border:4px solid #444;
+    margin:20px auto;
+    position:relative;
+    overflow:hidden;
+    border-radius:15px;
+}
+
+.block{
+    width:40px;
+    height:40px;
+    position:absolute;
+    cursor:pointer;
+    border-radius:8px;
+}
+
+#hexColor{
+    font-weight:bold;
+    font-size:24px;
+}
+
+input{
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:16px;
 }
 </style>
 </head>
-
 <body>
 
-<div class="container">
+<!-- GAME 1 -->
+
+<div class="container" id="giftGame">
+
     <h1>🎉 Happy Birthday Didi! :D 🎉</h1>
 
     <p>
@@ -70,10 +117,80 @@ button{
 
     <p id="message"></p>
 
-    <button onclick="restartGame()">Restart</button>
+    <button id="nextBtn" onclick="startColorGame()">
+        Next ➜
+    </button>
+
+</div>
+
+<!-- GAME 2 -->
+
+<div id="colorGame">
+
+    <h1>🌈 Catch The Yellow Blocks!</h1>
+
+    <p>
+        Catch 3 Yellow Blocks to continue.
+    </p>
+
+    <h2>
+        Yellow Score:
+        <span id="yellowScore">0</span>/3
+    </h2>
+
+    <h3>
+        Mystery Points:
+        <span id="mysteryPoints">0</span>
+    </h3>
+
+    <div id="fallArea"></div>
+
+    <p id="colorMessage"></p>
+
+    <button id="riddleBtn" onclick="showRiddle()">
+        Next Again ➜
+    </button>
+
+</div>
+
+<!-- RIDDLE -->
+
+<div id="riddlePage">
+
+    <h1>🧩 Final Riddle</h1>
+
+    <p style="font-size:22px;">
+
+        I'm your favourite color,<br><br>
+
+        <span id="hexColor">#1A1AFF</span>
+
+        <br><br>
+
+        I am rarely the color of the moon.
+
+    </p>
+
+    <input
+        id="riddleAnswer"
+        placeholder="Type your answer">
+
+    <br><br>
+
+    <button onclick="checkRiddle()">
+        Submit
+    </button>
+
+    <p id="riddleResult"></p>
+
 </div>
 
 <script>
+
+/* ------------------------
+   GAME 1 - GIFT HUNT
+------------------------ */
+
 let score = 0;
 
 const gift = document.getElementById("gift");
@@ -81,6 +198,7 @@ const scoreText = document.getElementById("score");
 const message = document.getElementById("message");
 
 function moveGift(){
+
     let x = Math.random() * 270;
     let y = Math.random() * 270;
 
@@ -91,28 +209,202 @@ function moveGift(){
 gift.addEventListener("click", function(){
 
     score++;
+
     scoreText.textContent = score;
 
     if(score >= 10){
+
         message.innerHTML =
         "🎂 Congratulations! 🎂<br><br>" +
-        "Happy Birthday!<br>" +
-        "You are an amazing didi and I hope you have the best day ever! :D ❤️";
+        "You unlocked the next challenge! ❤️";
+
         gift.style.display = "none";
+
+        document.getElementById("nextBtn")
+        .style.display = "inline-block";
+
     }else{
+
         moveGift();
+
     }
+
 });
 
-function restartGame(){
-    score = 0;
-    scoreText.textContent = score;
-    message.textContent = "";
-    gift.style.display = "block";
-    moveGift();
+moveGift();
+
+/* ------------------------
+   GAME 2 - COLOR CATCHER
+------------------------ */
+
+let yellowCount = 0;
+let mysteryPoints = 0;
+let gameStarted = false;
+
+function startColorGame(){
+
+    document.getElementById("giftGame")
+    .style.display = "none";
+
+    document.getElementById("colorGame")
+    .style.display = "block";
+
+    if(gameStarted) return;
+    gameStarted = true;
+
+    setInterval(createBlock, 900);
 }
 
-moveGift();
+function createBlock(){
+
+    const colors =
+    ["red","blue","green","yellow"];
+
+    const color =
+    colors[Math.floor(Math.random()*colors.length)];
+
+    const block =
+    document.createElement("div");
+
+    block.className = "block";
+    block.style.background = color;
+
+    block.style.left =
+    Math.random()*360 + "px";
+
+    block.style.top = "-40px";
+
+    document.getElementById("fallArea")
+    .appendChild(block);
+
+    let pos = -40;
+
+    const fall = setInterval(()=>{
+
+        pos += 4;
+
+        block.style.top =
+        pos + "px";
+
+        if(pos > 520){
+
+            clearInterval(fall);
+
+            if(block.parentNode){
+                block.remove();
+            }
+
+        }
+
+    },20);
+
+    block.onclick = ()=>{
+
+        clearInterval(fall);
+        block.remove();
+
+        const msg =
+        document.getElementById("colorMessage");
+
+        if(color === "yellow"){
+
+            yellowCount++;
+
+            document.getElementById("yellowScore")
+            .textContent = yellowCount;
+
+            msg.innerHTML =
+            "🟨 Nice! Yellow collected.";
+
+            if(yellowCount >= 3){
+
+                msg.innerHTML =
+                "🎉 You found enough Yellow Blocks!";
+
+                document.getElementById("riddleBtn")
+                .style.display = "inline-block";
+            }
+
+        }
+
+        else if(color === "red"){
+
+            msg.innerHTML =
+            "🎊 CONFETTI POPPER!! 🎊";
+
+        }
+
+        else if(color === "blue"){
+
+            msg.innerHTML =
+            "💎 You discovered a magical sapphire!";
+
+        }
+
+        else if(color === "green"){
+
+            mysteryPoints += 5;
+
+            document.getElementById("mysteryPoints")
+            .textContent = mysteryPoints;
+
+            msg.innerHTML =
+            "🍀 +5 Mystery Points!";
+        }
+
+    };
+}
+
+/* ------------------------
+   RIDDLE
+------------------------ */
+
+function showRiddle(){
+
+    document.getElementById("colorGame")
+    .style.display = "none";
+
+    document.getElementById("riddlePage")
+    .style.display = "block";
+}
+
+function checkRiddle(){
+
+    const answer =
+    document.getElementById("riddleAnswer")
+    .value
+    .trim()
+    .toLowerCase();
+
+    if(answer === "blue"){
+
+        document.getElementById("hexColor")
+        .innerHTML =
+        "<span style='color:#1A1AFF;'>Blue</span>";
+
+        document.body.style.background =
+        "#1A1AFF";
+
+        document.body.style.color =
+        "white";
+
+        document.getElementById("riddleResult")
+        .innerHTML =
+        "💙 Correct!<br><br>" +
+        "Happy Birthday Didi! 🎂❤️";
+
+    }
+
+    else{
+
+        document.getElementById("riddleResult")
+        .innerHTML =
+        "❌ Nope! Try again.";
+
+    }
+
+}
+
 </script>
 
 </body>
